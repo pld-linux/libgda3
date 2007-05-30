@@ -1,4 +1,5 @@
 #
+# TODO: update firebird plugin for current gda API
 # TODO: package dotnet-gda-sharp
 #
 # Conditional build:
