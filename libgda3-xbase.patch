@@ -1,0 +1,23 @@
+--- libgda-1.9.100/providers/xbase/gda-xbase-database.cpp.orig	2004-10-11 10:22:48.000000000 +0200
++++ libgda-1.9.100/providers/xbase/gda-xbase-database.cpp	2006-02-21 21:30:05.121330250 +0100
+@@ -104,3 +104,9 @@
+ 
+ 	return TRUE;
+ }
++
++extern "C" gchar *
++gda_xbase_database_get_name (GdaXbaseDatabase *xdb)
++{
++	return xdb->filename;
++}
+--- libgda-1.9.100/providers/xbase/gda-xbase-database.h.orig	2002-11-26 00:27:23.000000000 +0100
++++ libgda-1.9.100/providers/xbase/gda-xbase-database.h	2006-02-21 21:29:59.548982000 +0100
+@@ -34,6 +34,8 @@
+ 
+ gboolean          gda_xbase_database_delete_all_records (GdaXbaseDatabase *xdb);
+ 
++gchar *           gda_xbase_database_get_name (GdaXbaseDatabase *xdb);
++
+ G_END_DECLS
+ 
+ #endif
