@@ -47,7 +47,7 @@ BuildRequires:	intltool >= 0.35
 BuildRequires:	libtool
 BuildRequires:	libxml2-devel >= 1:.2.6.26
 BuildRequires:	libxslt-devel >= 1.1.17
-%{?with_mdb:BuildRequires:	mdbtools-devel}
+%{?with_mdb:BuildRequires:	mdbtools-devel >= 0.6}
 %{?with_mysql:BuildRequires:	mysql-devel}
 %{?with_ldap:BuildRequires:	openldap-devel >= 2.3.0}
 BuildRequires:	perl-base
@@ -172,6 +172,7 @@ Summary:	GDA MDB provider
 Summary(pl.UTF-8):   Źródło danych MDB
 Group:		Applications/Databases
 Requires:	%{name} = %{version}-%{release}
+Requires:	mdbtools-libs >= 0.6
 
 %description provider-mdb
 This package contains the GDA MDB provider.
