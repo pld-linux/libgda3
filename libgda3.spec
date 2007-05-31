@@ -1,5 +1,4 @@
 #
-# TODO: update firebird plugin for current gda API
 # TODO: package dotnet-gda-sharp
 #
 # Conditional build:
@@ -24,14 +23,14 @@ Summary:	GNU Data Access library
 Summary(pl.UTF-8):   Biblioteka GNU Data Access
 Name:		libgda3
 Version:	3.0.1
-Release:	1
+Release:	2
 License:	LGPL v2/GPL v2
 Group:		Applications/Databases
 Source0:	http://ftp.gnome.org/pub/gnome/sources/libgda/3.0/libgda-%{version}.tar.bz2
 # Source0-md5:	1aaf23c27ba94d0b231f2b123350110a
 Patch0:		%{name}-mdb.patch
-Patch1:		%{name}-xbase.patch
-Patch2:		%{name}-configure.patch
+Patch1:		%{name}-configure.patch
+Patch2:		%{name}-firebird.patch
 %{?with_firebird:BuildRequires:	Firebird-devel}
 BuildRequires:	autoconf >= 2.59
 BuildRequires:	automake >= 1:1.8
