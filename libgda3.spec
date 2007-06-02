@@ -31,6 +31,7 @@ Source0:	http://ftp.gnome.org/pub/gnome/sources/libgda/3.0/libgda-%{version}.tar
 Patch0:		%{name}-mdb.patch
 Patch1:		%{name}-configure.patch
 Patch2:		%{name}-firebird.patch
+URL:		http://www.gnome-db.org/
 %{?with_firebird:BuildRequires:	Firebird-devel}
 BuildRequires:	autoconf >= 2.59
 BuildRequires:	automake >= 1:1.8
