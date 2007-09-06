@@ -1,5 +1,6 @@
 #
 # TODO: package dotnet-gda-sharp
+#	resolve libgda-sqlite.la dependency	
 #
 # Conditional build:
 %bcond_without	doc		# don't generate html documentation
@@ -22,12 +23,12 @@
 Summary:	GNU Data Access library
 Summary(pl.UTF-8):   Biblioteka GNU Data Access
 Name:		libgda3
-Version:	3.0.1
-Release:	3
+Version:	3.1.1
+Release:	0.1
 License:	LGPL v2/GPL v2
 Group:		Applications/Databases
-Source0:	http://ftp.gnome.org/pub/gnome/sources/libgda/3.0/libgda-%{version}.tar.bz2
-# Source0-md5:	1aaf23c27ba94d0b231f2b123350110a
+Source0:	http://ftp.gnome.org/pub/gnome/sources/libgda/3.1/libgda-%{version}.tar.bz2
+# Source0-md5:	1e56331d2b69094312f1f011bd45177f
 Patch0:		%{name}-mdb.patch
 Patch1:		%{name}-configure.patch
 Patch2:		%{name}-firebird.patch
@@ -61,7 +62,8 @@ BuildRequires:	rpmbuild(macros) >= 1.213
 %{?with_xbase:BuildRequires:	xbase-devel >= 2.0.0}
 BuildRoot:	%{tmpdir}/%{name}-%{version}-root-%(id -u -n)
 
-%define		_libgdadir	libgda-%(echo %{version} | cut -d '.' -f 1-2 )
+#%define		_libgdadir	libgda-%(echo %{version} | cut -d '.' -f 1-2 )
+%define		_libgdadir	libgda-3.0
 %define		_providersdir	%{_libdir}/%{_libgdadir}/providers
 
 %description
@@ -284,7 +286,9 @@ rm -rf $RPM_BUILD_ROOT
 	HTML_DIR=%{_gtkdocdir}
 
 # modules dlopened by *.so through libgmodule
-rm -f $RPM_BUILD_ROOT%{_providersdir}/*.{a,la}
+# Needs to resolve problem with libgda-sqlite.la
+# rm -f $RPM_BUILD_ROOT%{_providersdir}/*.{a,la}
+rm -f $RPM_BUILD_ROOT%{_providersdir}/*.a
 
 rm -r $RPM_BUILD_ROOT%{_datadir}/locale/no
 
@@ -314,22 +318,27 @@ rm -rf $RPM_BUILD_ROOT
 %files devel
 %defattr(644,root,root,755)
 %attr(755,root,root) %{_bindir}/gda-author-dict-file-3.0
+%attr(755,root,root) %{_bindir}/gda-bdb-test
 %attr(755,root,root) %{_bindir}/gda-diagnose-3.0
 %attr(755,root,root) %{_bindir}/gda-inspect-dict-file-3.0
 %attr(755,root,root) %{_bindir}/gda-list-config-3.0
-%attr(755,root,root) %{_bindir}/gda-report-test-3.0
-%attr(755,root,root) %{_bindir}/gda-run-3.0
+#%attr(755,root,root) %{_bindir}/gda-report-test-3.0
+#%attr(755,root,root) %{_bindir}/gda-run-3.0
+%attr(755,root,root) %{_bindir}/gda-sql-3.0
 %attr(755,root,root) %{_bindir}/gda-test-connection-3.0
 %attr(755,root,root) %{_libdir}/libgda-3.0.so
 %attr(755,root,root) %{_libdir}/libgda-report-3.0.so
+%attr(755,root,root) %{_libdir}/libgda-virtual-3.0.so
 %attr(755,root,root) %{_libdir}/libgdasql-3.0.so
 %{_libdir}/libgda-3.0.la
 %{_libdir}/libgda-report-3.0.la
 %{_libdir}/libgdasql-3.0.la
+%{_libdir}/libgda-virtual-3.0.la
 %{_includedir}/libgda-3.0
 %{_pkgconfigdir}/libgda-3.0.pc
 %{_pkgconfigdir}/libgda-*-3.0.pc
 %{?with_doc:%{_gtkdocdir}/libgda-3.0}
+%{_sysconfdir}/libgda-3.0/sales_test.db
 
 %if %{with static_libs}
 %files static
@@ -337,6 +346,7 @@ rm -rf $RPM_BUILD_ROOT
 %{_libdir}/libgda-3.0.a
 %{_libdir}/libgda-report-3.0.a
 %{_libdir}/libgdasql-3.0.a
+%{_libdir}/libgda-virtual-3.0.a
 %endif
 
 %files provider-db
@@ -389,6 +399,7 @@ rm -rf $RPM_BUILD_ROOT
 %files provider-sqlite
 %defattr(644,root,root,755)
 %attr(755,root,root) %{_providersdir}/libgda-sqlite.so
+%{_providersdir}/libgda-sqlite.la
 %endif
 
 %if %{with xbase}
