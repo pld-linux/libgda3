@@ -1,6 +1,5 @@
 #
 # TODO: package dotnet-gda-sharp
-#	resolve libgda-sqlite.la dependency	
 #
 # Conditional build:
 %bcond_without	doc		# don't generate html documentation
@@ -24,7 +23,7 @@ Summary:	GNU Data Access library
 Summary(pl.UTF-8):   Biblioteka GNU Data Access
 Name:		libgda3
 Version:	3.1.1
-Release:	0.1
+Release:	1
 License:	LGPL v2/GPL v2
 Group:		Applications/Databases
 Source0:	http://ftp.gnome.org/pub/gnome/sources/libgda/3.1/libgda-%{version}.tar.bz2
@@ -57,7 +56,7 @@ BuildRequires:	popt-devel
 %{?with_pgsql:BuildRequires:	postgresql-devel}
 BuildRequires:	readline-devel >= 5.0
 BuildRequires:	rpmbuild(macros) >= 1.213
-#%{?with_sqlite:BuildRequires:	sqlite3-devel >= 3.3.100}
+%{?with_sqlite:BuildRequires:	sqlite3-devel >= 3.5.0-2}
 %{?with_odbc:BuildRequires:	unixODBC-devel}
 %{?with_xbase:BuildRequires:	xbase-devel >= 2.0.0}
 BuildRoot:	%{tmpdir}/%{name}-%{version}-root-%(id -u -n)
@@ -306,6 +305,7 @@ rm -rf $RPM_BUILD_ROOT
 %attr(755,root,root) %{_bindir}/gda-config-tool-3.0
 %attr(755,root,root) %{_libdir}/libgda-3.0.so.*.*.*
 %attr(755,root,root) %{_libdir}/libgda-report-3.0.so.*.*.*
+%attr(755,root,root) %{_libdir}/libgda-virtual-3.0.so
 %attr(755,root,root) %{_libdir}/libgdasql-3.0.so.*.*.*
 %dir %{_libdir}/%{_libgdadir}
 %dir %{_providersdir}
@@ -328,7 +328,6 @@ rm -rf $RPM_BUILD_ROOT
 %attr(755,root,root) %{_bindir}/gda-test-connection-3.0
 %attr(755,root,root) %{_libdir}/libgda-3.0.so
 %attr(755,root,root) %{_libdir}/libgda-report-3.0.so
-%attr(755,root,root) %{_libdir}/libgda-virtual-3.0.so
 %attr(755,root,root) %{_libdir}/libgdasql-3.0.so
 %{_libdir}/libgda-3.0.la
 %{_libdir}/libgda-report-3.0.la
