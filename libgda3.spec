@@ -22,15 +22,13 @@
 Summary:	GNU Data Access library
 Summary(pl.UTF-8):   Biblioteka GNU Data Access
 Name:		libgda3
-Version:	3.1.1
+Version:	3.1.2
 Release:	1
 License:	LGPL v2/GPL v2
 Group:		Applications/Databases
 Source0:	http://ftp.gnome.org/pub/gnome/sources/libgda/3.1/libgda-%{version}.tar.bz2
-# Source0-md5:	1e56331d2b69094312f1f011bd45177f
-Patch0:		%{name}-mdb.patch
+# Source0-md5:	fe299d264ddeb7fbc36276f74f1abfdc
 Patch1:		%{name}-configure.patch
-Patch2:		%{name}-firebird.patch
 URL:		http://www.gnome-db.org/
 %{?with_firebird:BuildRequires:	Firebird-devel}
 BuildRequires:	autoconf >= 2.59
@@ -246,9 +244,7 @@ Pakiet dostarczający dane z xBase (dBase, Clippera, FoxPro) dla GDA.
 
 %prep
 %setup -q -n libgda-%{version}
-%patch0 -p1
 %patch1 -p1
-%patch2 -p1
 
 %if ! %{with gamin}
 sed -i -e 's#\(PKG_CHECK_MODULES(GAMIN.*\)#dnl \1#g' configure.in
@@ -289,8 +285,6 @@ rm -rf $RPM_BUILD_ROOT
 # rm -f $RPM_BUILD_ROOT%{_providersdir}/*.{a,la}
 rm -f $RPM_BUILD_ROOT%{_providersdir}/*.a
 
-rm -r $RPM_BUILD_ROOT%{_datadir}/locale/no
-
 %find_lang libgda-3.0
 
 %clean
@@ -305,7 +299,8 @@ rm -rf $RPM_BUILD_ROOT
 %attr(755,root,root) %{_bindir}/gda-config-tool-3.0
 %attr(755,root,root) %{_libdir}/libgda-3.0.so.*.*.*
 %attr(755,root,root) %{_libdir}/libgda-report-3.0.so.*.*.*
-%attr(755,root,root) %{_libdir}/libgda-virtual-3.0.so
+%attr(755,root,root) %{_libdir}/libgda-xslt-3.0.so.*.*.*
+#%attr(755,root,root) %{_libdir}/libgda-virtual-3.0.so
 %attr(755,root,root) %{_libdir}/libgdasql-3.0.so.*.*.*
 %dir %{_libdir}/%{_libgdadir}
 %dir %{_providersdir}
@@ -331,8 +326,9 @@ rm -rf $RPM_BUILD_ROOT
 %attr(755,root,root) %{_libdir}/libgdasql-3.0.so
 %{_libdir}/libgda-3.0.la
 %{_libdir}/libgda-report-3.0.la
+%{_libdir}/libgda-xslt-3.0.la
 %{_libdir}/libgdasql-3.0.la
-%{_libdir}/libgda-virtual-3.0.la
+#%{_libdir}/libgda-virtual-3.0.la
 %{_includedir}/libgda-3.0
 %{_pkgconfigdir}/libgda-3.0.pc
 %{_pkgconfigdir}/libgda-*-3.0.pc
@@ -344,8 +340,9 @@ rm -rf $RPM_BUILD_ROOT
 %defattr(644,root,root,755)
 %{_libdir}/libgda-3.0.a
 %{_libdir}/libgda-report-3.0.a
+%{_libdir}/libgda-xslt-3.0.a
 %{_libdir}/libgdasql-3.0.a
-%{_libdir}/libgda-virtual-3.0.a
+#%{_libdir}/libgda-virtual-3.0.a
 %endif
 
 %files provider-db

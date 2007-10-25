@@ -92,15 +92,23 @@
  	fi
  fi
  
-@@ -751,7 +751,7 @@
- 	else
- 		AC_DEFINE(HAVE_FIREBIRD, 1, [Have FireBird])
+@@ -823,13 +823,13 @@
  		FIREBIRD_CFLAGS="-I${firebirddir}/include"
--		FIREBIRD_LIBS="-L${firebirddir}/lib -lgds -ldl -lcrypt"
-+		FIREBIRD_LIBS="-L${libdir} -lgds -ldl -lcrypt"
+ 		if test -f $firebirddir/lib/libfbembed.so
+ 		then
+-			FIREBIRD_LIBS="-L${firebirddir}/lib -lfbembed"
++			FIREBIRD_LIBS="-L${libdir} -lfbembed"
+ 		else
+ 			if test -f $firebirddir/lib/libfbclient.so
+ 			then
+-				FIREBIRD_LIBS="-L${firebirddir}/lib -lfbclient"
++				FIREBIRD_LIBS="-L${libdir} -lfbclient"
+ 			else
+-				FIREBIRD_LIBS="-L${firebirddir}/lib -lgds -ldl -lcrypt"
++				FIREBIRD_LIBS="-L${libdir} -lgds -ldl -lcrypt"
+ 			fi
+ 		fi
  	fi
- fi
- 
 @@ -789,7 +789,7 @@
  		AC_MSG_WARN(Xbase backend not used)
  	else
@@ -114,8 +122,8 @@
  	mdbdir=""
  	for d in $dir /usr /usr/local /opt/gnome
  	do
--		if test -f $d/include/mdbtools.h -a -f $d/$lib/libmdbsql$libext -o -f $d/include/mdbtools.h -a -f $d/$lib/libmdbsql.a
-+		if test -f $d/include/mdb/mdbtools.h -a -f $d/$lib/libmdbsql$libext -o -f $d/include/mdb/mdbtools.h -a -f $d/$lib/libmdbsql.a
+-		if test -f $d/include/mdbtools.h -a -f $d/$lib/libmdb$libext -o -f $d/include/mdbtools.h -a -f $d/$lib/libmdb.a
++		if test -f $d/include/mdb/mdbtools.h -a -f $d/$lib/libmdb$libext -o -f $d/include/mdb/mdbtools.h -a -f $d/$lib/libmdb.a
  		then
  			AC_MSG_RESULT(found MDB Tools in $d)
  			mdbdir=$d
@@ -124,9 +132,9 @@
  		AC_MSG_WARN(MDB backend not used)
  	else
 -		MDB_CFLAGS=-I${mdbdir}/include
--		MDB_LIBS="-L${mdbdir}/lib -lmdb -lmdbsql"
 +		MDB_CFLAGS=-I${mdbdir}/include/mdb
-+		MDB_LIBS="-L${libdir} -lmdb -lmdbsql"
+-		MDB_LIBS="-L${mdbdir}/lib -lmdb"
++		MDB_LIBS="-L${libdir} -lmdb"
  		AC_DEFINE(HAVE_MDB, 1, [Have MDB])
  
  		save_CFLAGS="$CFLAGS"
