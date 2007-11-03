@@ -24,7 +24,7 @@ Summary(pl.UTF-8):   Biblioteka GNU Data Access
 Name:		libgda3
 Version:	3.1.2
 Release:	2
-License:	LGPL v2/GPL v2
+License:	LGPL v2+/GPL v2+
 Group:		Applications/Databases
 Source0:	http://ftp.gnome.org/pub/gnome/sources/libgda/3.1/libgda-%{version}.tar.bz2
 # Source0-md5:	fe299d264ddeb7fbc36276f74f1abfdc
@@ -281,9 +281,7 @@ rm -rf $RPM_BUILD_ROOT
 	HTML_DIR=%{_gtkdocdir}
 
 # modules dlopened by *.so through libgmodule
-# Needs to resolve problem with libgda-sqlite.la
-# rm -f $RPM_BUILD_ROOT%{_providersdir}/*.{a,la}
-rm -f $RPM_BUILD_ROOT%{_providersdir}/*.a
+rm -f $RPM_BUILD_ROOT%{_providersdir}/*.{a,la}
 
 %find_lang libgda-3.0
 
@@ -301,7 +299,6 @@ rm -rf $RPM_BUILD_ROOT
 %attr(755,root,root) %{_libdir}/libgda-3.0.so.*.*.*
 %attr(755,root,root) %{_libdir}/libgda-report-3.0.so.*.*.*
 %attr(755,root,root) %{_libdir}/libgda-xslt-3.0.so.*.*.*
-#%attr(755,root,root) %{_libdir}/libgda-virtual-3.0.so
 %attr(755,root,root) %{_libdir}/libgdasql-3.0.so.*.*.*
 %dir %{_libdir}/%{_libgdadir}
 %dir %{_providersdir}
@@ -318,8 +315,6 @@ rm -rf $RPM_BUILD_ROOT
 %attr(755,root,root) %{_bindir}/gda-diagnose-3.0
 %attr(755,root,root) %{_bindir}/gda-inspect-dict-file-3.0
 %attr(755,root,root) %{_bindir}/gda-list-config-3.0
-#%attr(755,root,root) %{_bindir}/gda-report-test-3.0
-#%attr(755,root,root) %{_bindir}/gda-run-3.0
 %attr(755,root,root) %{_bindir}/gda-sql-3.0
 %attr(755,root,root) %{_bindir}/gda-test-connection-3.0
 %attr(755,root,root) %{_libdir}/libgda-3.0.so
@@ -329,12 +324,11 @@ rm -rf $RPM_BUILD_ROOT
 %{_libdir}/libgda-report-3.0.la
 %{_libdir}/libgda-xslt-3.0.la
 %{_libdir}/libgdasql-3.0.la
-#%{_libdir}/libgda-virtual-3.0.la
 %{_includedir}/libgda-3.0
 %{_pkgconfigdir}/libgda-3.0.pc
 %{_pkgconfigdir}/libgda-*-3.0.pc
-%{?with_doc:%{_gtkdocdir}/libgda-3.0}
 %{_sysconfdir}/libgda-3.0/sales_test.db
+%{?with_doc:%{_gtkdocdir}/libgda-3.0}
 
 %if %{with static_libs}
 %files static
@@ -343,7 +337,6 @@ rm -rf $RPM_BUILD_ROOT
 %{_libdir}/libgda-report-3.0.a
 %{_libdir}/libgda-xslt-3.0.a
 %{_libdir}/libgdasql-3.0.a
-#%{_libdir}/libgda-virtual-3.0.a
 %endif
 
 %files provider-db
@@ -396,7 +389,6 @@ rm -rf $RPM_BUILD_ROOT
 %files provider-sqlite
 %defattr(644,root,root,755)
 %attr(755,root,root) %{_providersdir}/libgda-sqlite.so
-%{_providersdir}/libgda-sqlite.la
 %endif
 
 %if %{with xbase}
