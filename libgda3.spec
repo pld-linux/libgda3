@@ -5,7 +5,9 @@
 %bcond_without	doc		# don't generate html documentation
 %bcond_without	static_libs	# don't build static libraries
 %bcond_with	gamin		# use gamin instead of fam library
-#
+%bcond_without	gnomevfs	# build without gnome-vfs support
+%bcond_without	gnome		# without gnomevfs (convenience alias)
+# - database plugins:
 %bcond_without	firebird	# build without firebird plugin
 %bcond_without	freetds		# build without freetds plugin
 %bcond_without	ldap		# build without ldap plugin
@@ -16,16 +18,19 @@
 %bcond_without	sqlite		# build without sqlite plugin
 %bcond_without	xbase		# build without xbase plugin
 #
+%if %{without gnome}
+%undefine	with_gnomevfs
+%endif
 %ifnarch %{ix86} sparc sparcv9 alpha
 %undefine	with_firebird
 %endif
 Summary:	GNU Data Access library
-Summary(pl.UTF-8):   Biblioteka GNU Data Access
+Summary(pl.UTF-8):	Biblioteka GNU Data Access
 Name:		libgda3
 Version:	3.1.2
 Release:	3
 License:	LGPL v2+/GPL v2+
-Group:		Applications/Databases
+Group:		Libraries
 Source0:	http://ftp.gnome.org/pub/gnome/sources/libgda/3.1/libgda-%{version}.tar.bz2
 # Source0-md5:	fe299d264ddeb7fbc36276f74f1abfdc
 Patch1:		%{name}-configure.patch
@@ -41,10 +46,12 @@ BuildRequires:	flex
 %{?with_gamin:BuildRequires:	gamin-devel}
 BuildRequires:	glib2-devel >= 1:2.12.0
 BuildRequires:	gnome-common >= 2.12.0
+%{?with_gnomevfs:BuildRequires:	gnome-vfs2-devel >= 2.0}
 BuildRequires:	gtk-doc >= 1.6
-BuildRequires:	intltool >= 0.35
+BuildRequires:	intltool >= 0.35.5
+BuildRequires:	libgcrypt-devel >= 1.1.42
 BuildRequires:	libtool
-BuildRequires:	libxml2-devel >= 1:.2.6.26
+BuildRequires:	libxml2-devel >= 1:2.6.26
 BuildRequires:	libxslt-devel >= 1.1.17
 %{?with_mdb:BuildRequires:	mdbtools-devel >= 0.6}
 %{?with_mysql:BuildRequires:	mysql-devel}
@@ -59,7 +66,6 @@ BuildRequires:	rpmbuild(macros) >= 1.213
 %{?with_xbase:BuildRequires:	xbase-devel >= 2.0.0}
 BuildRoot:	%{tmpdir}/%{name}-%{version}-root-%(id -u -n)
 
-#%define		_libgdadir	libgda-%(echo %{version} | cut -d '.' -f 1-2 )
 %define		_libgdadir	libgda-3.0
 %define		_providersdir	%{_libdir}/%{_libgdadir}/providers
 
@@ -82,14 +88,16 @@ libgda była częścią projektu GNOME-DB, ale została wydzielona, aby
 pozwolić na używanie przez niegnomowe aplikacje.
 
 %package devel
-Summary:	GNU Data Access development
-Summary(pl.UTF-8):   Dla programistów GNU Data Access
+Summary:	GNU Data Access development files
+Summary(pl.UTF-8):	Pliki programistyczne biblioteki GNU Data Access
 Group:		Development/Libraries
 Requires:	%{name} = %{version}-%{release}
 %{!?with_gamin:Requires:	fam-devel}
 %{?with_gamin:Requires:	gamin-devel}
 Requires:	glib2-devel >= 1:2.12.0
+%{?with_gnomevfs:Requires:	gnome-vfs2-devel >= 2.0}
 Requires:	gtk-doc-common
+Requires:	libgcrypt-devel >= 1.1.42
 Requires:	libxml2-devel >= 1:2.6.26
 Requires:	libxslt-devel >= 1.1.17
 Obsoletes:	libgda0-devel
@@ -109,7 +117,7 @@ programistów używających libgda.
 
 %package static
 Summary:	GNU Data Access static libraries
-Summary(pl.UTF-8):   Statyczne biblioteki GNU Data Access
+Summary(pl.UTF-8):	Statyczne biblioteki GNU Data Access
 Group:		Development/Libraries
 Requires:	%{name}-devel = %{version}-%{release}
 
@@ -121,8 +129,8 @@ Statyczne biblioteki GNU Data Access.
 
 %package provider-db
 Summary:	GDA Berkeley DB provider
-Summary(pl.UTF-8):   Źródło danych Berkeley DB dla GDA
-Group:		Applications/Databases
+Summary(pl.UTF-8):	Źródło danych Berkeley DB dla GDA
+Group:		Libraries
 Requires:	%{name} = %{version}-%{release}
 
 %description provider-db
@@ -133,8 +141,8 @@ Pakiet dostaczający dane z Berkeley DB dla GDA.
 
 %package provider-firebird
 Summary:	GDA Firebird provider
-Summary(pl.UTF-8):   Źródło danych Firebird dla GDA
-Group:		Applications/Databases
+Summary(pl.UTF-8):	Źródło danych Firebird dla GDA
+Group:		Libraries
 Requires:	%{name} = %{version}-%{release}
 
 %description provider-firebird
@@ -145,8 +153,8 @@ Pakiet dostarczający dane z Firebird dla GDA.
 
 %package provider-freetds
 Summary:	GDA FreeTDS provider
-Summary(pl.UTF-8):   Źródło danych FreeTDS dla GDA
-Group:		Applications/Databases
+Summary(pl.UTF-8):	Źródło danych FreeTDS dla GDA
+Group:		Libraries
 Requires:	%{name} = %{version}-%{release}
 
 %description provider-freetds
@@ -157,8 +165,8 @@ Pakiet dostarczający dane z FreeTDS dla GDA.
 
 %package provider-ldap
 Summary:	GDA LDAP provider
-Summary(pl.UTF-8):   Źródło danych LDAP dla GDA
-Group:		Applications/Databases
+Summary(pl.UTF-8):	Źródło danych LDAP dla GDA
+Group:		Libraries
 Requires:	%{name} = %{version}-%{release}
 
 %description provider-ldap
@@ -169,8 +177,8 @@ Pakiet dostarczający dane z LDAP dla GDA
 
 %package provider-mdb
 Summary:	GDA MDB provider
-Summary(pl.UTF-8):   Źródło danych MDB
-Group:		Applications/Databases
+Summary(pl.UTF-8):	Źródło danych MDB
+Group:		Libraries
 Requires:	%{name} = %{version}-%{release}
 Requires:	mdbtools-libs >= 0.6
 
@@ -182,8 +190,8 @@ Pakiet dostarczający dane z MDB dla GDA.
 
 %package provider-mysql
 Summary:	GDA MySQL provider
-Summary(pl.UTF-8):   Źródło danych MySQL dla GDA
-Group:		Applications/Databases
+Summary(pl.UTF-8):	Źródło danych MySQL dla GDA
+Group:		Libraries
 Requires:	%{name} = %{version}-%{release}
 Obsoletes:	libgda-mysql0
 
@@ -195,8 +203,8 @@ Pakiet dostarczający dane z MySQL dla GDA.
 
 %package provider-odbc
 Summary:	GDA ODBC provider
-Summary(pl.UTF-8):   Źródło danych ODBC dla GDA
-Group:		Applications/Databases
+Summary(pl.UTF-8):	Źródło danych ODBC dla GDA
+Group:		Libraries
 Requires:	%{name} = %{version}-%{release}
 
 %description provider-odbc
@@ -207,8 +215,8 @@ Pakiet dostarczający dane z ODBC dla GDA.
 
 %package provider-postgres
 Summary:	GDA PostgreSQL provider
-Summary(pl.UTF-8):   Źródło danych PostgreSQL dla GDA
-Group:		Applications/Databases
+Summary(pl.UTF-8):	Źródło danych PostgreSQL dla GDA
+Group:		Libraries
 Requires:	%{name} = %{version}-%{release}
 Obsoletes:	libgda-postgres0
 
@@ -220,8 +228,8 @@ Pakiet dostarczający dane z PostgreSQL dla GDA.
 
 %package provider-sqlite
 Summary:	GDA SQLite provider
-Summary(pl.UTF-8):   Źródło danych SQLite dla GDA
-Group:		Applications/Databases
+Summary(pl.UTF-8):	Źródło danych SQLite dla GDA
+Group:		Libraries
 Requires:	%{name} = %{version}-%{release}
 
 %description provider-sqlite
@@ -232,8 +240,8 @@ Pakiet dostarczający dane z SQLite dla GDA.
 
 %package provider-xbase
 Summary:	GDA xBase provider
-Summary(pl.UTF-8):   Źródło danych xBase dla GDA
-Group:		Applications/Databases
+Summary(pl.UTF-8):	Źródło danych xBase dla GDA
+Group:		Libraries
 Requires:	%{name} = %{version}-%{release}
 
 %description provider-xbase
@@ -246,8 +254,11 @@ Pakiet dostarczający dane z xBase (dBase, Clippera, FoxPro) dla GDA.
 %setup -q -n libgda-%{version}
 %patch1 -p1
 
-%if ! %{with gamin}
-sed -i -e 's#\(PKG_CHECK_MODULES(GAMIN.*\)#dnl \1#g' configure.in
+%if %{without gamin}
+sed -i -e 's#PKG_CHECK_MODULES(GAMIN.*)#have_fam=no#g' configure.in
+%endif
+%if %{without gnomevfs}
+sed -i -e 's#PKG_CHECK_MODULES(GNOMEVFS.*)#have_gnomevfs=no#g' configure.in
 %endif
 
 %build
@@ -297,9 +308,13 @@ rm -rf $RPM_BUILD_ROOT
 %attr(755,root,root) %{_bindir}/gda-config-tool-3.0
 %attr(755,root,root) %{_bindir}/gda-list-server-op-3.0
 %attr(755,root,root) %{_libdir}/libgda-3.0.so.*.*.*
+%attr(755,root,root) %ghost %{_libdir}/libgda-3.0.so.3
 %attr(755,root,root) %{_libdir}/libgda-report-3.0.so.*.*.*
+%attr(755,root,root) %ghost %{_libdir}/libgda-report-3.0.so.3
 %attr(755,root,root) %{_libdir}/libgda-xslt-3.0.so.*.*.*
+%attr(755,root,root) %ghost %{_libdir}/libgda-xslt-3.0.so.0
 %attr(755,root,root) %{_libdir}/libgdasql-3.0.so.*.*.*
+%attr(755,root,root) %ghost %{_libdir}/libgdasql-3.0.so.3
 %dir %{_libdir}/%{_libgdadir}
 %dir %{_providersdir}
 %{_datadir}/libgda-3.0
@@ -319,6 +334,7 @@ rm -rf $RPM_BUILD_ROOT
 %attr(755,root,root) %{_bindir}/gda-test-connection-3.0
 %attr(755,root,root) %{_libdir}/libgda-3.0.so
 %attr(755,root,root) %{_libdir}/libgda-report-3.0.so
+%attr(755,root,root) %{_libdir}/libgda-xslt-3.0.so
 %attr(755,root,root) %{_libdir}/libgdasql-3.0.so
 %{_libdir}/libgda-3.0.la
 %{_libdir}/libgda-report-3.0.la
