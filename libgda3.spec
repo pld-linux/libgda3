@@ -16,6 +16,7 @@
 %bcond_without	odbc		# build without unixODBC
 %bcond_without	pgsql		# build without PostgreSQL plugin
 %bcond_without	sqlite		# build without sqlite plugin
+%bcond_without	sybase		# build without sybase plugin
 %bcond_without	xbase		# build without xbase plugin
 #
 %if %{without gnome}
@@ -27,12 +28,12 @@
 Summary:	GNU Data Access library
 Summary(pl.UTF-8):	Biblioteka GNU Data Access
 Name:		libgda3
-Version:	3.1.2
-Release:	4
+Version:	3.1.4
+Release:	1
 License:	LGPL v2+/GPL v2+
 Group:		Libraries
 Source0:	http://ftp.gnome.org/pub/gnome/sources/libgda/3.1/libgda-%{version}.tar.bz2
-# Source0-md5:	fe299d264ddeb7fbc36276f74f1abfdc
+# Source0-md5:	e584211e04b502d3fb747236c913378e
 Patch1:		%{name}-configure.patch
 URL:		http://www.gnome-db.org/
 %{?with_firebird:BuildRequires:	Firebird-devel}
@@ -42,11 +43,11 @@ BuildRequires:	bison
 BuildRequires:	db-devel
 %{!?with_gamin:BuildRequires:	fam-devel}
 BuildRequires:	flex
-%{?with_freetds:BuildRequires:	freetds-devel >= 0.64}
+%{?with_freetds:BuildRequires:	freetds-devel = 0.64}
 %{?with_gamin:BuildRequires:	gamin-devel}
 BuildRequires:	glib2-devel >= 1:2.12.0
 BuildRequires:	gnome-common >= 2.12.0
-%{?with_gnomevfs:BuildRequires:	gnome-vfs2-devel >= 2.0}
+%{?with_gnomevfs:BuildRequires:	gnome-vfs2-devel >= 2.20}
 BuildRequires:	gtk-doc >= 1.6
 BuildRequires:	intltool >= 0.35.5
 BuildRequires:	libgcrypt-devel >= 1.1.42
@@ -62,6 +63,7 @@ BuildRequires:	popt-devel
 BuildRequires:	readline-devel >= 5.0
 BuildRequires:	rpmbuild(macros) >= 1.213
 %{?with_sqlite:BuildRequires:	sqlite3-devel >= 3.5.0-2}
+%{?with_sybase:BuildRequires:	freetds-devel >= 0.82}
 %{?with_odbc:BuildRequires:	unixODBC-devel}
 %{?with_xbase:BuildRequires:	xbase-devel >= 2.0.0}
 BuildRoot:	%{tmpdir}/%{name}-%{version}-root-%(id -u -n)
@@ -95,7 +97,7 @@ Requires:	%{name} = %{version}-%{release}
 %{!?with_gamin:Requires:	fam-devel}
 %{?with_gamin:Requires:	gamin-devel}
 Requires:	glib2-devel >= 1:2.12.0
-%{?with_gnomevfs:Requires:	gnome-vfs2-devel >= 2.0}
+%{?with_gnomevfs:Requires:	gnome-vfs2-devel >= 2.20}
 Requires:	gtk-doc-common
 Requires:	libgcrypt-devel >= 1.1.42
 Requires:	libxml2-devel >= 1:2.6.26
@@ -238,6 +240,18 @@ This package contains the GDA SQLite provider.
 %description provider-sqlite -l pl.UTF-8
 Pakiet dostarczający dane z SQLite dla GDA.
 
+%package provider-sybase
+Summary:	GDA Sybase provider
+Summary(pl.UTF-8):	Źródło danych Sybase dla GDA
+Group:		Libraries
+Requires:	%{name} = %{version}-%{release}
+
+%description provider-sybase
+This package contains the GDA Sybase provider.
+
+%description provider-sybase -l pl.UTF-8
+Pakiet dostarczający dane z Sybase dla GDA.
+
 %package provider-xbase
 Summary:	GDA xBase provider
 Summary(pl.UTF-8):	Źródło danych xBase dla GDA
@@ -269,8 +283,8 @@ CXXFLAGS="%{rpmcxxflags} -fno-rtti -fno-exceptions"
 %{__autoconf}
 %{__automake}
 %configure \
+	%{!?with_static_libs:--disable-static} \
 	%{?with_doc:--enable-gtk-doc} \
-	%{!?with_static_libs:--enable-static=no} \
 	--with-html-dir=%{_gtkdocdir} \
 	--with%{!?with_firebird:out}-firebird \
 	--with%{!?with_ldap:out}-ldap \
@@ -281,6 +295,7 @@ CXXFLAGS="%{rpmcxxflags} -fno-rtti -fno-exceptions"
 	--with%{!?with_sqlite:out}-sqlite \
 	--with%{!?with_freetds:out}-tds \
 	--with%{!?with_xbase:out}-xbase \
+	%{?with_sybase:--with-sybase=/usr} \
 	--without-oracle
 %{__make} -j1
 
@@ -405,6 +420,12 @@ rm -rf $RPM_BUILD_ROOT
 %files provider-sqlite
 %defattr(644,root,root,755)
 %attr(755,root,root) %{_providersdir}/libgda-sqlite.so
+%endif
+
+%if %{with sybase}
+%files provider-sybase
+%defattr(644,root,root,755)
+%attr(755,root,root) %{_providersdir}/libgda-sybase.so
 %endif
 
 %if %{with xbase}
