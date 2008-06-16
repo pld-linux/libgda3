@@ -9,7 +9,7 @@
 %bcond_without	gnome		# without gnomevfs (convenience alias)
 # - database plugins:
 %bcond_without	firebird	# build without firebird plugin
-%bcond_without	freetds		# build without freetds plugin
+%bcond_with	freetds		# build with freetds plugin
 %bcond_without	ldap		# build without ldap plugin
 %bcond_without	mdb		# build without MDB plugin
 %bcond_without	mysql		# build without MySQL plugin
@@ -29,12 +29,12 @@ Summary:	GNU Data Access library
 Summary(pl.UTF-8):	Biblioteka GNU Data Access
 Name:		libgda3
 Version:	3.1.4
-Release:	3
+Release:	5
 License:	LGPL v2+/GPL v2+
 Group:		Libraries
 Source0:	http://ftp.gnome.org/pub/gnome/sources/libgda/3.1/libgda-%{version}.tar.bz2
 # Source0-md5:	e584211e04b502d3fb747236c913378e
-Patch1:		%{name}-configure.patch
+Patch0:		%{name}-configure.patch
 URL:		http://www.gnome-db.org/
 %{?with_firebird:BuildRequires:	Firebird-devel}
 BuildRequires:	autoconf >= 2.59
@@ -266,7 +266,7 @@ Pakiet dostarczający dane z xBase (dBase, Clippera, FoxPro) dla GDA.
 
 %prep
 %setup -q -n libgda-%{version}
-%patch1 -p1
+%patch0 -p1
 
 %if %{without gamin}
 sed -i -e 's#PKG_CHECK_MODULES(GAMIN.*)#have_fam=no#g' configure.in
