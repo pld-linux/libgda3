@@ -43,7 +43,7 @@ BuildRequires:	bison
 BuildRequires:	db-devel
 %{!?with_gamin:BuildRequires:	fam-devel}
 BuildRequires:	flex
-%{?with_freetds:BuildRequires:	freetds-devel >= 0.82}
+%{?with_freetds:BuildRequires:	freetds-devel = 0.64}
 %{?with_gamin:BuildRequires:	gamin-devel >= 0.1.8}
 BuildRequires:	glib2-devel >= 1:2.12.0
 BuildRequires:	gnome-common >= 2.12.0
