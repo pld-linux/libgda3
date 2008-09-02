@@ -28,12 +28,12 @@
 Summary:	GNU Data Access library
 Summary(pl.UTF-8):	Biblioteka GNU Data Access
 Name:		libgda3
-Version:	3.1.4
-Release:	6
+Version:	3.1.5
+Release:	1
 License:	LGPL v2+/GPL v2+
 Group:		Libraries
 Source0:	http://ftp.gnome.org/pub/gnome/sources/libgda/3.1/libgda-%{version}.tar.bz2
-# Source0-md5:	e584211e04b502d3fb747236c913378e
+# Source0-md5:	eb7da5286a112e7cff3111c89fba4456
 Patch0:		%{name}-configure.patch
 URL:		http://www.gnome-db.org/
 %{?with_firebird:BuildRequires:	Firebird-devel}
