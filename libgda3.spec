@@ -42,10 +42,13 @@ BuildRequires:	autoconf >= 2.59
 BuildRequires:	automake >= 1:1.8
 BuildRequires:	bison
 BuildRequires:	db-devel
+BuildRequires:	docbook-dtd412-xml
 %{!?with_gamin:BuildRequires:	fam-devel}
 BuildRequires:	flex
 %{?with_freetds:BuildRequires:	freetds-devel = 0.64}
+%{?with_sybase:BuildRequires:	freetds-devel >= 0.82}
 %{?with_gamin:BuildRequires:	gamin-devel >= 0.1.8}
+BuildRequires:	gettext-devel
 BuildRequires:	glib2-devel >= 1:2.12.0
 BuildRequires:	gnome-common >= 2.12.0
 %{?with_gnomevfs:BuildRequires:	gnome-vfs2-devel >= 2.20}
@@ -59,12 +62,12 @@ BuildRequires:	libxslt-devel >= 1.1.17
 %{?with_mysql:BuildRequires:	mysql-devel}
 %{?with_ldap:BuildRequires:	openldap-devel >= 2.4.6}
 BuildRequires:	perl-base
+BuildRequires:	pkgconfig
 BuildRequires:	popt-devel
 %{?with_pgsql:BuildRequires:	postgresql-devel}
 BuildRequires:	readline-devel >= 5.0
 BuildRequires:	rpmbuild(macros) >= 1.213
 %{?with_sqlite:BuildRequires:	sqlite3-devel >= 3.5.0-2}
-%{?with_sybase:BuildRequires:	freetds-devel >= 0.82}
 %{?with_odbc:BuildRequires:	unixODBC-devel}
 %{?with_xbase:BuildRequires:	xbase-devel >= 2.0.0}
 BuildRoot:	%{tmpdir}/%{name}-%{version}-root-%(id -u -n)
