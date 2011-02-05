@@ -29,7 +29,7 @@ Summary:	GNU Data Access library
 Summary(pl.UTF-8):	Biblioteka GNU Data Access
 Name:		libgda3
 Version:	3.1.5
-Release:	6
+Release:	7
 License:	LGPL v2+/GPL v2+
 Group:		Libraries
 Source0:	http://ftp.gnome.org/pub/gnome/sources/libgda/3.1/libgda-%{version}.tar.bz2
@@ -312,7 +312,10 @@ rm -rf $RPM_BUILD_ROOT
 	HTML_DIR=%{_gtkdocdir}
 
 # modules dlopened by *.so through libgmodule
-rm -f $RPM_BUILD_ROOT%{_providersdir}/*.{a,la}
+%if %{with static_libs}
+%{__rm} $RPM_BUILD_ROOT%{_providersdir}/*.a
+%endif
+%{__rm} $RPM_BUILD_ROOT{%{_providersdir},%{_libdir}}/*.la
 
 %find_lang libgda-3.0
 
@@ -356,10 +359,6 @@ rm -rf $RPM_BUILD_ROOT
 %attr(755,root,root) %{_libdir}/libgda-report-3.0.so
 %attr(755,root,root) %{_libdir}/libgda-xslt-3.0.so
 %attr(755,root,root) %{_libdir}/libgdasql-3.0.so
-%{_libdir}/libgda-3.0.la
-%{_libdir}/libgda-report-3.0.la
-%{_libdir}/libgda-xslt-3.0.la
-%{_libdir}/libgdasql-3.0.la
 %{_includedir}/libgda-3.0
 %{_pkgconfigdir}/libgda-3.0.pc
 %{_pkgconfigdir}/libgda-*-3.0.pc
