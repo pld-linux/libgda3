@@ -1,6 +1,4 @@
 #
-# TODO: package dotnet-gda-sharp
-#
 # Conditional build:
 %bcond_without	doc		# don't generate html documentation
 %bcond_without	static_libs	# don't build static libraries
