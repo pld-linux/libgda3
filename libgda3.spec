@@ -36,6 +36,7 @@ Patch0:		%{name}-configure.patch
 Patch1:		%{name}-am.patch
 Patch2:		glib232.patch
 Patch3:		format-security.patch
+Patch4:		mdb-0.7.patch
 URL:		http://www.gnome-db.org/
 %{?with_firebird:BuildRequires:	Firebird-devel}
 BuildRequires:	autoconf >= 2.59
@@ -274,6 +275,7 @@ Pakiet dostarczający dane z xBase (dBase, Clippera, FoxPro) dla GDA.
 %patch1 -p1
 %patch2 -p1
 %patch3 -p1
+%patch4 -p1
 
 %if %{without gamin}
 sed -i -e 's#PKG_CHECK_MODULES(GAMIN.*)#have_fam=no#g' configure.in
