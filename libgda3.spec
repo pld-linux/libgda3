@@ -106,7 +106,6 @@ Requires:	%{name} = %{version}-%{release}
 %{?with_gamin:Requires:	gamin-devel >= 0.1.8}
 Requires:	glib2-devel >= 1:2.12.0
 %{?with_gnomevfs:Requires:	gnome-vfs2-devel >= 2.20}
-Requires:	gtk-doc-common
 Requires:	libgcrypt-devel >= 1.1.42
 Requires:	libxml2-devel >= 1:2.6.26
 Requires:	libxslt-devel >= 1.1.17
@@ -330,9 +329,9 @@ CXXFLAGS="%{rpmcxxflags} -fno-rtti -fno-exceptions"
 	--with-oracle%{!?with_oci:=no} \
 	--with-postgres%{!?with_pgsql:=no} \
 	--with-sqlite%{!?with_sqlite:=no} \
+	%{?with_sybase:--with-sybase=/usr} \
 	--with-tds%{!?with_freetds:=no} \
-	--with-xbase%{!?with_xbase:=no} \
-	%{?with_sybase:--with-sybase=/usr}
+	--with-xbase%{!?with_xbase:=no}
 %{__make} -j1
 
 %install
