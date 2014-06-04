@@ -1,21 +1,23 @@
+# TODO: ibmdb2 provider
 #
 # Conditional build:
-%bcond_without	doc		# don't generate html documentation
-%bcond_without	static_libs	# don't build static libraries
+%bcond_without	apidocs		# API documentation build
+%bcond_without	static_libs	# static libraries build
 %bcond_with	gamin		# use gamin instead of fam library
-%bcond_without	gnomevfs	# build without gnome-vfs support
-%bcond_without	gnome		# without gnomevfs (convenience alias)
+%bcond_without	gnomevfs	# gnome-vfs support
+%bcond_without	gnome		# (convenience alias for gnomevfs)
 # - database plugins:
-%bcond_without	firebird	# build without firebird plugin
-%bcond_with	freetds		# build with freetds plugin
-%bcond_without	ldap		# build without ldap plugin
-%bcond_without	mdb		# build without MDB plugin
-%bcond_without	mysql		# build without MySQL plugin
-%bcond_without	odbc		# build without unixODBC
-%bcond_without	pgsql		# build without PostgreSQL plugin
-%bcond_without	sqlite		# build without sqlite plugin
-%bcond_without	sybase		# build without sybase plugin
-%bcond_without	xbase		# build without xbase plugin
+%bcond_without	firebird	# Firebird plugin
+%bcond_with	freetds		# FreeTDS plugin
+%bcond_without	ldap		# LDAP plugin
+%bcond_without	mdb		# MDB plugin
+%bcond_without	mysql		# MySQL plugin
+%bcond_with	oci		# Oracle DB plugin
+%bcond_without	odbc		# unixODBC plugin
+%bcond_without	pgsql		# PostgreSQL plugin
+%bcond_without	sqlite		# SQLite plugin
+%bcond_without	sybase		# sybase plugin
+%bcond_without	xbase		# xbase plugin
 #
 %if %{without gnome}
 %undefine	with_gnomevfs
@@ -30,7 +32,7 @@ Version:	3.1.5
 Release:	18
 License:	LGPL v2+/GPL v2+
 Group:		Libraries
-Source0:	http://ftp.gnome.org/pub/gnome/sources/libgda/3.1/libgda-%{version}.tar.bz2
+Source0:	http://ftp.gnome.org/pub/GNOME/sources/libgda/3.1/libgda-%{version}.tar.bz2
 # Source0-md5:	eb7da5286a112e7cff3111c89fba4456
 Patch0:		%{name}-configure.patch
 Patch1:		%{name}-am.patch
@@ -62,6 +64,7 @@ BuildRequires:	libxslt-devel >= 1.1.17
 %{?with_mdb:BuildRequires:	mdbtools-devel >= 0.6}
 %{?with_mysql:BuildRequires:	mysql-devel}
 %{?with_ldap:BuildRequires:	openldap-devel >= 2.4.6}
+%{?with_oci:BuildRequires:	oracle-instantclient-devel}
 BuildRequires:	perl-base
 BuildRequires:	pkgconfig
 BuildRequires:	popt-devel
@@ -73,8 +76,8 @@ BuildRequires:	rpmbuild(macros) >= 1.213
 %{?with_xbase:BuildRequires:	xbase-devel >= 2.0.0}
 BuildRoot:	%{tmpdir}/%{name}-%{version}-root-%(id -u -n)
 
-%define		_libgdadir	libgda-3.0
-%define		_providersdir	%{_libdir}/%{_libgdadir}/providers
+%define		libgdadir	libgda-3.0
+%define		providersdir	%{_libdir}/%{libgdadir}/providers
 
 %description
 GNU Data Access is an attempt to provide uniform access to different
@@ -134,6 +137,18 @@ GNU Data Access static libraries.
 %description static -l pl.UTF-8
 Statyczne biblioteki GNU Data Access.
 
+%package apidocs
+Summary:	GNU Data Access API documentation
+Summary(pl.UTF-8):	Dokumentacja API GNU Data Access
+Group:		Documentation
+Requires:	gtk-doc-common
+
+%description apidocs
+GNU Data Access API documentation.
+
+%description apidocs -l pl.UTF-8
+Dokumentacja API GNU Data Access.
+
 %package provider-db
 Summary:	GDA Berkeley DB provider
 Summary(pl.UTF-8):	Źródło danych Berkeley DB dla GDA
@@ -144,7 +159,7 @@ Requires:	%{name} = %{version}-%{release}
 This package contains the GDA Berkeley DB provider.
 
 %description provider-db -l pl.UTF-8
-Pakiet dostaczający dane z Berkeley DB dla GDA.
+Pakiet dostarczający dane z Berkeley DB dla GDA.
 
 %package provider-firebird
 Summary:	GDA Firebird provider
@@ -180,7 +195,7 @@ Requires:	%{name} = %{version}-%{release}
 This package contains the GDA LDAP provider.
 
 %description provider-ldap -l pl.UTF-8
-Pakiet dostarczający dane z LDAP dla GDA
+Pakiet dostarczający dane z LDAP dla GDA.
 
 %package provider-mdb
 Summary:	GDA MDB provider
@@ -219,6 +234,18 @@ This package contains the GDA ODBC provider.
 
 %description provider-odbc -l pl.UTF-8
 Pakiet dostarczający dane z ODBC dla GDA.
+
+%package provider-oracle
+Summary:	GDA Oracle provider
+Summary(pl.UTF-8):	Źródło danych Oracle dla GDA
+Group:		Libraries
+Requires:	%{name} = %{version}-%{release}
+
+%description provider-oracle
+This package contains the GDA Oracle provider.
+
+%description provider-oracle -l pl.UTF-8
+Pakiet dostarczający dane z bazy Oracle dla GDA.
 
 %package provider-postgres
 Summary:	GDA PostgreSQL provider
@@ -278,10 +305,10 @@ Pakiet dostarczający dane z xBase (dBase, Clippera, FoxPro) dla GDA.
 %patch4 -p1
 
 %if %{without gamin}
-sed -i -e 's#PKG_CHECK_MODULES(GAMIN.*)#have_fam=no#g' configure.in
+%{__sed} -i -e 's#PKG_CHECK_MODULES(GAMIN.*)#have_fam=no#g' configure.in
 %endif
 %if %{without gnomevfs}
-sed -i -e 's#PKG_CHECK_MODULES(GNOMEVFS.*)#have_gnomevfs=no#g' configure.in
+%{__sed} -i -e 's#PKG_CHECK_MODULES(GNOMEVFS.*)#have_gnomevfs=no#g' configure.in
 %endif
 
 %build
@@ -293,19 +320,19 @@ CXXFLAGS="%{rpmcxxflags} -fno-rtti -fno-exceptions"
 %{__automake}
 %configure \
 	%{!?with_static_libs:--disable-static} \
-	%{?with_doc:--enable-gtk-doc} \
+	%{?with_apidocs:--enable-gtk-doc} \
 	--with-html-dir=%{_gtkdocdir} \
-	--with%{!?with_firebird:out}-firebird \
-	--with%{!?with_ldap:out}-ldap \
-	--with%{!?with_mdb:out}-mdb \
-	--with%{!?with_mysql:out}-mysql \
-	--with%{!?with_odbc:out}-odbc \
-	--with%{!?with_pgsql:out}-postgres \
-	--with%{!?with_sqlite:out}-sqlite \
-	--with%{!?with_freetds:out}-tds \
-	--with%{!?with_xbase:out}-xbase \
-	%{?with_sybase:--with-sybase=/usr} \
-	--without-oracle
+	--with-firebird%{!?with_firebird:=no} \
+	--with-ldap%{!?with_ldap:=no} \
+	--with-mdb%{!?with_mdb:=no} \
+	--with-mysql%{!?with_mysql:=no} \
+	--with-odbc%{!?with_odbc:=no} \
+	--with-oracle%{!?with_oci:=no} \
+	--with-postgres%{!?with_pgsql:=no} \
+	--with-sqlite%{!?with_sqlite:=no} \
+	--with-tds%{!?with_freetds:=no} \
+	--with-xbase%{!?with_xbase:=no} \
+	%{?with_sybase:--with-sybase=/usr}
 %{__make} -j1
 
 %install
@@ -317,9 +344,9 @@ rm -rf $RPM_BUILD_ROOT
 
 # modules dlopened by *.so through libgmodule
 %if %{with static_libs}
-%{__rm} $RPM_BUILD_ROOT%{_providersdir}/*.a
+%{__rm} $RPM_BUILD_ROOT%{providersdir}/*.a
 %endif
-%{__rm} $RPM_BUILD_ROOT{%{_providersdir},%{_libdir}}/*.la
+%{__rm} $RPM_BUILD_ROOT{%{providersdir},%{_libdir}}/*.la
 
 mv -f $RPM_BUILD_ROOT%{_datadir}/locale/{sr@Latn,sr@latin}
 
@@ -344,9 +371,10 @@ rm -rf $RPM_BUILD_ROOT
 %attr(755,root,root) %ghost %{_libdir}/libgda-xslt-3.0.so.0
 %attr(755,root,root) %{_libdir}/libgdasql-3.0.so.*.*.*
 %attr(755,root,root) %ghost %{_libdir}/libgdasql-3.0.so.3
-%dir %{_libdir}/%{_libgdadir}
-%dir %{_providersdir}
-%{_datadir}/libgda-3.0
+%dir %{_libdir}/%{libgdadir}
+%dir %{providersdir}
+%dir %{_datadir}/libgda-3.0
+%{_datadir}/libgda-3.0/dtd
 %dir %{_sysconfdir}/libgda-3.0
 %config(noreplace) %verify(not md5 mtime size) %{_sysconfdir}/libgda-3.0/config
 %{_mandir}/man1/gda-config-tool-3.0.1*
@@ -369,7 +397,6 @@ rm -rf $RPM_BUILD_ROOT
 %{_pkgconfigdir}/libgda-3.0.pc
 %{_pkgconfigdir}/libgda-*-3.0.pc
 %{_sysconfdir}/libgda-3.0/sales_test.db
-%{?with_doc:%{_gtkdocdir}/libgda-3.0}
 
 %if %{with static_libs}
 %files static
@@ -380,66 +407,90 @@ rm -rf $RPM_BUILD_ROOT
 %{_libdir}/libgdasql-3.0.a
 %endif
 
+%if %{with apidocs}
+%files apidocs
+%defattr(644,root,root,755)
+%{_gtkdocdir}/libgda-3.0
+%endif
+
 %files provider-db
 %defattr(644,root,root,755)
-%attr(755,root,root) %{_providersdir}/libgda-bdb.so
+%attr(755,root,root) %{providersdir}/libgda-bdb.so
+%{_datadir}/libgda-3.0/bdb_specs_*.xml
 
 %if %{with firebird}
 %files provider-firebird
 %defattr(644,root,root,755)
-%attr(755,root,root) %{_providersdir}/libgda-firebird.so
+%attr(755,root,root) %{providersdir}/libgda-firebird.so
+%{_datadir}/libgda-3.0/firebird_specs_*.xml
 %endif
 
 %if %{with freetds}
 %files provider-freetds
 %defattr(644,root,root,755)
-%attr(755,root,root) %{_providersdir}/libgda-freetds.so
+%attr(755,root,root) %{providersdir}/libgda-freetds.so
+%{_datadir}/libgda-3.0/freetds_specs_*.xml
 %endif
 
 %if %{with ldap}
 %files provider-ldap
 %defattr(644,root,root,755)
-%attr(755,root,root) %{_providersdir}/libgda-ldap.so
+%attr(755,root,root) %{providersdir}/libgda-ldap.so
+%{_datadir}/libgda-3.0/ldap_specs_*.xml
 %endif
 
 %if %{with mdb}
 %files provider-mdb
 %defattr(644,root,root,755)
-%attr(755,root,root) %{_providersdir}/libgda-mdb.so
+%attr(755,root,root) %{providersdir}/libgda-mdb.so
+%{_datadir}/libgda-3.0/mdb_specs_*.xml
 %endif
 
 %if %{with mysql}
 %files provider-mysql
 %defattr(644,root,root,755)
-%attr(755,root,root) %{_providersdir}/libgda-mysql.so
+%attr(755,root,root) %{providersdir}/libgda-mysql.so
+%{_datadir}/libgda-3.0/mysql_specs_*.xml
 %endif
 
 %if %{with odbc}
 %files provider-odbc
 %defattr(644,root,root,755)
-%attr(755,root,root) %{_providersdir}/libgda-odbc.so
+%attr(755,root,root) %{providersdir}/libgda-odbc.so
+%{_datadir}/libgda-3.0/odbc_specs_*.xml
+%endif
+
+%if %{with oci}
+%files provider-oracle
+%defattr(644,root,root,755)
+%attr(755,root,root) %{providersdir}/libgda-oracle.so
+%{_datadir}/libgda-3.0/oracle_specs_*.xml
 %endif
 
 %if %{with pgsql}
 %files provider-postgres
 %defattr(644,root,root,755)
-%attr(755,root,root) %{_providersdir}/libgda-postgres.so
+%attr(755,root,root) %{providersdir}/libgda-postgres.so
+%{_datadir}/libgda-3.0/postgres_specs_*.xml
 %endif
 
 %if %{with sqlite}
 %files provider-sqlite
 %defattr(644,root,root,755)
-%attr(755,root,root) %{_providersdir}/libgda-sqlite.so
+%attr(755,root,root) %{providersdir}/libgda-sqlite.so
+%{_datadir}/libgda-3.0/sqlite_specs_*.xml
 %endif
 
 %if %{with sybase}
 %files provider-sybase
 %defattr(644,root,root,755)
-%attr(755,root,root) %{_providersdir}/libgda-sybase.so
+%attr(755,root,root) %{providersdir}/libgda-sybase.so
+%{_datadir}/libgda-3.0/sybase_specs_*.xml
 %endif
 
 %if %{with xbase}
 %files provider-xbase
 %defattr(644,root,root,755)
-%attr(755,root,root) %{_providersdir}/libgda-xbase.so
+%attr(755,root,root) %{providersdir}/libgda-xbase.so
+%{_datadir}/libgda-3.0/xbase_specs_*.xml
 %endif
