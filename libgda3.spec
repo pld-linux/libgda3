@@ -51,7 +51,7 @@ BuildRequires:	flex
 %{?with_freetds:BuildRequires:	freetds-devel = 0.64}
 %{?with_sybase:BuildRequires:	freetds-devel >= 0.82}
 %{?with_gamin:BuildRequires:	gamin-devel >= 0.1.8}
-BuildRequires:	gettext-devel
+BuildRequires:	gettext-tools
 BuildRequires:	glib2-devel >= 1:2.12.0
 BuildRequires:	gnome-common >= 2.12.0
 %{?with_gnomevfs:BuildRequires:	gnome-vfs2-devel >= 2.20}
