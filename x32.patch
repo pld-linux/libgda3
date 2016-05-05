@@ -1,0 +1,16 @@
+--- libgda-3.1.5/configure.in.orig	2016-05-05 18:15:14.000000000 +0200
++++ libgda-3.1.5/configure.in	2016-05-05 18:20:11.722298716 +0200
+@@ -213,7 +213,12 @@
+ dnl Test for lib64 architectures
+ dnl FIXME: should really check target
+ case $host_cpu in
+-x86_64* | sparc64* | s390x* | ppc64* | powerpc64* ) lib="lib64";;
++sparc64* | s390x* | ppc64* | powerpc64* ) lib="lib64";;
++x86_64*) case $host_os in
++	*-gnux32) lib="libx32";;
++	*) lib="lib64";;
++	esac
++	;;
+ *) lib="lib";;
+ esac
+ 
