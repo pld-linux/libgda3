@@ -18,7 +18,7 @@
 %bcond_without	sqlite		# SQLite plugin
 %bcond_without	sybase		# sybase plugin
 %bcond_without	xbase		# xbase plugin
-#
+
 %if %{without gnome}
 %undefine	with_gnomevfs
 %endif
@@ -29,7 +29,7 @@ Summary:	GNU Data Access library
 Summary(pl.UTF-8):	Biblioteka GNU Data Access
 Name:		libgda3
 Version:	3.1.5
-Release:	19
+Release:	20
 License:	LGPL v2+/GPL v2+
 Group:		Libraries
 Source0:	http://ftp.gnome.org/pub/GNOME/sources/libgda/3.1/libgda-%{version}.tar.bz2
@@ -142,6 +142,9 @@ Summary:	GNU Data Access API documentation
 Summary(pl.UTF-8):	Dokumentacja API GNU Data Access
 Group:		Documentation
 Requires:	gtk-doc-common
+%if "%{_rpmversion}" >= "5"
+BuildArch:	noarch
+%endif
 
 %description apidocs
 GNU Data Access API documentation.
@@ -349,7 +352,7 @@ rm -rf $RPM_BUILD_ROOT
 %endif
 %{__rm} $RPM_BUILD_ROOT{%{providersdir},%{_libdir}}/*.la
 
-mv -f $RPM_BUILD_ROOT%{_datadir}/locale/{sr@Latn,sr@latin}
+mv -f $RPM_BUILD_ROOT%{_localedir}/{sr@Latn,sr@latin}
 
 %find_lang libgda-3.0
 
