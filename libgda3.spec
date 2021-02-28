@@ -142,9 +142,7 @@ Summary:	GNU Data Access API documentation
 Summary(pl.UTF-8):	Dokumentacja API GNU Data Access
 Group:		Documentation
 Requires:	gtk-doc-common
-%if "%{_rpmversion}" >= "5"
 BuildArch:	noarch
-%endif
 
 %description apidocs
 GNU Data Access API documentation.
