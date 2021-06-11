@@ -71,6 +71,7 @@ BuildRequires:	pkgconfig
 BuildRequires:	popt-devel
 %{?with_pgsql:BuildRequires:	postgresql-devel}
 BuildRequires:	readline-devel >= 5.0
+BuildRequires:	rpm-build >= 4.6
 BuildRequires:	rpmbuild(macros) >= 1.213
 %{?with_sqlite:BuildRequires:	sqlite3-devel >= 3.5.0-2}
 %{?with_odbc:BuildRequires:	unixODBC-devel}
@@ -350,7 +351,7 @@ rm -rf $RPM_BUILD_ROOT
 %endif
 %{__rm} $RPM_BUILD_ROOT{%{providersdir},%{_libdir}}/*.la
 
-mv -f $RPM_BUILD_ROOT%{_localedir}/{sr@Latn,sr@latin}
+%{__mv} $RPM_BUILD_ROOT%{_localedir}/{sr@Latn,sr@latin}
 
 %find_lang libgda-3.0
 
