@@ -5,7 +5,7 @@
  	g_free (str);
  	if (rc != SQLITE_OK) {
 -		g_set_error (error, 0, 0, g_strdup (zErrMsg));
-+		g_set_error (error, 0, 0, "%s", g_strdup (zErrMsg));
++		g_set_error_literal (error, 0, 0, zErrMsg);
  		sqlite3_free (zErrMsg);
  		gda_vconnection_data_model_table_data_free (td);
  		cnc->priv->table_data_list = g_slist_remove (cnc->priv->table_data_list, td);
@@ -14,7 +14,7 @@
  
  	if (rc != SQLITE_OK) {
 -		g_set_error (error, 0, 0, g_strdup (zErrMsg));
-+		g_set_error (error, 0, 0, "%s", g_strdup (zErrMsg));
++		g_set_error_literal (error, 0, 0, zErrMsg);
  		sqlite3_free (zErrMsg);
  		return FALSE;
  	}
@@ -25,19 +25,21 @@
  
  		if (errmsg != SQLITE_OK) {
 -			g_set_error (error, 0, 0, sqlite3_errmsg (scnc->connection)); 
-+			g_set_error (error, 0, 0, "%s", sqlite3_errmsg (scnc->connection)); 
++			g_set_error_literal (error, 0, 0, sqlite3_errmsg (scnc->connection)); 
  			retval = FALSE;
  		}
  		gda_sqlite_free_cnc (scnc);
-@@ -1058,7 +1058,7 @@
+@@ -1058,8 +1058,8 @@
  		g_free (tmp);
  
  		if (g_unlink (filename)) {
 -			g_set_error (error, 0, 0,
-+			g_set_error (error, 0, 0, "%s",
- 				     sys_errlist [errno]);
+-				     sys_errlist [errno]);
++			g_set_error_literal (error, 0, 0,
++				     strerror (errno));
  			retval = FALSE;
  		}
+ 		g_free (filename);
 --- libgda-3.1.5/libgda/sql-delimiter/gda-sql-delimiter.c~	2008-07-20 11:51:22.000000000 +0200
 +++ libgda-3.1.5/libgda/sql-delimiter/gda-sql-delimiter.c	2013-11-30 22:17:32.765454196 +0100
 @@ -60,7 +60,7 @@
@@ -45,7 +47,7 @@
  			else if (!strcmp (string, "syntax error"))
  				g_set_error (gda_sql_error, 0, 0, _("Syntax error near `%s'"), gda_delimitertext);
 -			else g_set_error (gda_sql_error, 0, 0, string);
-+			else g_set_error (gda_sql_error, 0, 0, "%s", string);
++			else g_set_error_literal (gda_sql_error, 0, 0, string);
  		}
  	}
  	else
@@ -56,7 +58,7 @@
  				if (gda_connection_event_get_event_type (event) == GDA_CONNECTION_EVENT_ERROR) {
  					if (error && !(*error))
 -						g_set_error (error, GDA_CONNECTION_ERROR, GDA_CONNECTION_OPEN_ERROR,
-+						g_set_error (error, GDA_CONNECTION_ERROR, GDA_CONNECTION_OPEN_ERROR, "%s",
++						g_set_error_literal (error, GDA_CONNECTION_ERROR, GDA_CONNECTION_OPEN_ERROR,
  							     gda_connection_event_get_description (event));
  					gda_client_notify_error_event (cnc->priv->client, cnc, 
  								       GDA_CONNECTION_EVENT (l->data));
@@ -65,7 +67,7 @@
  		if (gda_connection_event_get_event_type (GDA_CONNECTION_EVENT (events->data)) == 
  		    GDA_CONNECTION_EVENT_ERROR) {
 -			g_set_error (error, GDA_CONNECTION_ERROR, GDA_CONNECTION_EXECUTE_COMMAND_ERROR,
-+			g_set_error (error, GDA_CONNECTION_ERROR, GDA_CONNECTION_EXECUTE_COMMAND_ERROR, "%s",
++			g_set_error_literal (error, GDA_CONNECTION_ERROR, GDA_CONNECTION_EXECUTE_COMMAND_ERROR,
  				     gda_connection_event_get_description (GDA_CONNECTION_EVENT (events->data)));
  			has_error = TRUE;
  		}
@@ -76,7 +78,7 @@
  	GError *error = NULL;
  
 -        g_set_error (&error, 0, 0, err);
-+        g_set_error (&error, 0, 0, "%s", err);
++        g_set_error_literal (&error, 0, 0, err);
  	g_print ("ADD_ERROR (%s)\n", err);
          model->priv->errors = g_slist_append (model->priv->errors, error);
  }
@@ -87,7 +89,7 @@
  	GError *error = NULL;
  
 -        g_set_error (&error, 0, 0, err);
-+        g_set_error (&error, 0, 0, "%s", err);
++        g_set_error_literal (&error, 0, 0, err);
  	g_print ("ADD_ERROR (%s)\n", err);
          model->priv->errors = g_slist_append (model->priv->errors, error);
  }
@@ -96,7 +98,7 @@
  				       imodel->priv->rows->len - 1);
  		add_error (imodel, str);
 -		g_set_error (error, 0, 0, str);
-+		g_set_error (error, 0, 0, "%s", str);
++		g_set_error_literal (error, 0, 0, str);
  		g_free (str);
                  return FALSE;
          }
@@ -105,7 +107,7 @@
  							       filename, new_filename);
  					add_error (imodel, str);
 -					g_set_error (error, 0, 0, str);
-+					g_set_error (error, 0, 0, "%s", str);
++					g_set_error_literal (error, 0, 0, str);
  					g_free (str);
  					g_free (new_filename);
  					g_free (filename);
@@ -114,7 +116,7 @@
  				str = g_strdup_printf (_("Could not create directory '%s'"), new_path);
  				add_error (imodel, str);
 -				g_set_error (error, 0, 0, str);
-+				g_set_error (error, 0, 0, "%s", str);
++				g_set_error_literal (error, 0, 0, str);
  				g_free (str);
  				g_free (old_path);
  				return FALSE;
@@ -123,7 +125,7 @@
  				str = g_strdup_printf (_("Could not rename file '%s' to '%s'"), filename, new_filename);
  				add_error (imodel, str);
 -				g_set_error (error, 0, 0, str);
-+				g_set_error (error, 0, 0, "%s", str);
++				g_set_error_literal (error, 0, 0, str);
  				g_free (str);
  				g_free (new_filename);
  				g_free (filename);
@@ -132,7 +134,7 @@
  					str = g_strdup_printf (_("Could not overwrite contents of file '%s'"), filename);
  					add_error (imodel, str);
 -					g_set_error (error, 0, 0, str);
-+					g_set_error (error, 0, 0, "%s", str);
++					g_set_error_literal (error, 0, 0, str);
  					g_free (str);
  					g_object_unref (op);
  					g_free (filename);
@@ -141,7 +143,7 @@
  				str = g_strdup_printf (_("Cannot set contents of filename '%s'"), complete_filename);
  				add_error (imodel, str);
 -				g_set_error (error, 0, 0, str);
-+				g_set_error (error, 0, 0, "%s", str);
++				g_set_error_literal (error, 0, 0, str);
  				g_free (str);
  				if (bin_to_free)
  					g_free (bin_data);
@@ -150,7 +152,7 @@
  			str = g_strdup_printf (_("Cannot create directory '%s'"), dirname);
  			add_error (imodel, str);
 -			g_set_error (error, 0, 0, str);
-+			g_set_error (error, 0, 0, "%s", str);
++			g_set_error_literal (error, 0, 0, str);
  			g_free (str);
  			return -1;
  		}
@@ -159,7 +161,7 @@
  				       imodel->priv->rows->len - 1);
  		add_error (imodel, str);
 -		g_set_error (error, 0, 0, str);
-+		g_set_error (error, 0, 0, "%s", str);
++		g_set_error_literal (error, 0, 0, str);
  		g_free (str);
                  return FALSE;
          }
@@ -168,7 +170,7 @@
  		str = g_strdup_printf (_("Cannot remove file '%s'"), filename);
  		add_error (imodel, str);
 -		g_set_error (error, 0, 0, str);
-+		g_set_error (error, 0, 0, "%s", str);
++		g_set_error_literal (error, 0, 0, str);
  		g_free (str);
  		g_free (filename);
  		return FALSE;
@@ -179,7 +181,7 @@
  	GError *error = NULL;
  
 -	g_set_error (&error, 0, 0, err);
-+	g_set_error (&error, 0, 0, "%s", err);
++	g_set_error_literal (&error, 0, 0, err);
  	model->priv->errors = g_slist_append (model->priv->errors, error);
  }
  
@@ -190,7 +192,7 @@
  				if (errors) {
  					GError *err = (GError *) errors->data;
 -					g_set_error (error, 0, 0, err->message);
-+					g_set_error (error, 0, 0, "%s", err->message);
++					g_set_error_literal (error, 0, 0, err->message);
  					g_object_unref (model);
  					model = NULL;
  					allok = FALSE;
@@ -210,7 +212,7 @@
  				     GDA_CONNECTION_EVENT_ERROR) &&
  				    !g_list_find (errors_before, list->data)) 
 -					g_set_error (error, GDA_QUERY_ERROR, GDA_QUERY_EXEC_ERROR,
-+					g_set_error (error, GDA_QUERY_ERROR, GDA_QUERY_EXEC_ERROR, "%s",
++					g_set_error_literal (error, GDA_QUERY_ERROR, GDA_QUERY_EXEC_ERROR,
  						     gda_connection_event_get_description (GDA_CONNECTION_EVENT (list->data)));
  			}
  			if (errors_before)
@@ -219,21 +221,21 @@
  						if (errors) {
  							GError *err = (GError *) errors->data;
 -							g_set_error (error, 0, 0, err->message);
-+							g_set_error (error, 0, 0, "%s", err->message);
++							g_set_error_literal (error, 0, 0, err->message);
  							g_object_unref (model);
  							model = NULL;
  							return FALSE;
 --- libgda-3.1.5/libgda/gda-query-field-value.c~	2008-07-20 11:51:23.000000000 +0200
 +++ libgda-3.1.5/libgda/gda-query-field-value.c	2013-11-30 22:24:26.649835416 +0100
-@@ -1474,7 +1474,7 @@
- 				g_set_error (error,
+@@ -1471,7 +1471,7 @@ gda_query_field_value_render_as_sql (Gda
+ 						       gda_object_get_name (GDA_OBJECT (param_source)), str2);
+ 				g_free (str2);
+ 				
+-				g_set_error (error,
++				g_set_error_literal (error,
  					     GDA_QUERY_FIELD_VALUE_ERROR,
  					     GDA_QUERY_FIELD_VALUE_RENDER_ERROR,
--					     str);
-+					     "%s", str);
- 				g_free (str);
- 				
- 				/*g_print ("Param %p (%s) is invalid!\n", param_source, 
+ 					     str);
 --- libgda-3.1.5/providers/mysql/gda-mysql-provider.c~	2008-07-20 11:51:16.000000000 +0200
 +++ libgda-3.1.5/providers/mysql/gda-mysql-provider.c	2013-11-30 22:26:15.987641260 +0100
 @@ -282,7 +282,7 @@
@@ -241,7 +243,7 @@
  	
  	if (!mysql_ret) {
 -		g_set_error (error, 0, 0, mysql_error (mysql));
-+		g_set_error (error, 0, 0, "%s", mysql_error (mysql));
++		g_set_error_literal (error, 0, 0, mysql_error (mysql));
  		g_free (mysql);
  		return NULL;
  	}
@@ -250,7 +252,7 @@
  			
  			if (res) {
 -				g_set_error (error, 0, 0, mysql_error (mysql));
-+				g_set_error (error, 0, 0, "%s", mysql_error (mysql));
++				g_set_error_literal (error, 0, 0, mysql_error (mysql));
  				mysql_close (mysql);
  				return FALSE;
  			}
@@ -261,7 +263,7 @@
  				       priv_data->mysql_res_rows - 1);
  		gda_connection_add_event_string (priv_data->cnc, str);
 -		g_set_error (error, 0, 0, str);
-+		g_set_error (error, 0, 0, "%s", str);
++		g_set_error_literal (error, 0, 0, str);
  		g_free (str);
  						 
  		return NULL;
@@ -270,7 +272,7 @@
  		GdaConnectionEvent *event = gda_mysql_make_error (mysql);
  		gda_connection_add_event (priv_data->cnc, event);
 -		g_set_error (error, 0, 0,
-+		g_set_error (error, 0, 0, "%s",
++		g_set_error_literal (error, 0, 0,
  			     gda_connection_event_get_description (event));
  		return FALSE;
  	}
@@ -281,7 +283,7 @@
  
  		if (PQstatus (pconn) != CONNECTION_OK) {
 -                        g_set_error (error, 0, 0, PQerrorMessage (pconn));
-+                        g_set_error (error, 0, 0, "%s", PQerrorMessage (pconn));
++                        g_set_error_literal (error, 0, 0, PQerrorMessage (pconn));
                          PQfinish(pconn);
  
                          return FALSE;
@@ -290,7 +292,7 @@
  			g_free (sql);
  			if (!pg_res || PQresultStatus (pg_res) != PGRES_COMMAND_OK) {
 -				g_set_error (error, 0, 0, PQresultErrorMessage (pg_res));
-+				g_set_error (error, 0, 0, "%s", PQresultErrorMessage (pg_res));
++				g_set_error_literal (error, 0, 0, PQresultErrorMessage (pg_res));
  				PQfinish (pconn);
  				return FALSE;
  			}

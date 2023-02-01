@@ -334,15 +334,14 @@ diff -ur libgda-3.1.5.orig/libgda/sqlite/gda-sqlite.h libgda-3.1.5/libgda/sqlite
 diff -ur libgda-3.1.5.orig/libgda/sqlite/gda-sqlite-provider.c libgda-3.1.5/libgda/sqlite/gda-sqlite-provider.c
 --- libgda-3.1.5.orig/libgda/sqlite/gda-sqlite-provider.c	2008-07-20 11:51:22.000000000 +0200
 +++ libgda-3.1.5/libgda/sqlite/gda-sqlite-provider.c	2012-06-29 12:53:05.257332538 +0200
-@@ -25,7 +25,7 @@
+@@ -24,6 +24,7 @@
+ #include <stdlib.h>
  #include <errno.h>
  #include <string.h>
- #include <glib/gi18n-lib.h>
--#include <glib/gstdio.h>
 +#include <glib.h>
+ #include <glib/gi18n-lib.h>
+ #include <glib/gstdio.h>
  #include <libgda/gda-data-model-array.h>
- #include <libgda/gda-data-model-private.h>
- #include <libgda/gda-parameter-list.h>
 diff -ur libgda-3.1.5.orig/libgda-report/DocBook/gda-report-docbook-document.c libgda-3.1.5/libgda-report/DocBook/gda-report-docbook-document.c
 --- libgda-3.1.5.orig/libgda-report/DocBook/gda-report-docbook-document.c	2008-07-20 11:51:14.000000000 +0200
 +++ libgda-3.1.5/libgda-report/DocBook/gda-report-docbook-document.c	2012-06-29 12:53:05.230665872 +0200

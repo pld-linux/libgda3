@@ -40,6 +40,7 @@ Patch2:		glib232.patch
 Patch3:		format-security.patch
 Patch4:		mdb-0.7.patch
 Patch5:		x32.patch
+Patch6:		libgda-mdb1.0.patch
 URL:		https://www.gnome-db.org/
 %{?with_firebird:BuildRequires:	Firebird-devel}
 BuildRequires:	autoconf >= 2.59
@@ -306,6 +307,7 @@ Pakiet dostarczający dane z xBase (dBase, Clippera, FoxPro) dla GDA.
 %patch3 -p1
 %patch4 -p1
 %patch5 -p1
+%patch6 -p1
 
 %if %{without gamin}
 %{__sed} -i -e 's#PKG_CHECK_MODULES(GAMIN.*)#have_fam=no#g' configure.in
@@ -314,13 +316,34 @@ Pakiet dostarczający dane z xBase (dBase, Clippera, FoxPro) dla GDA.
 %{__sed} -i -e 's#PKG_CHECK_MODULES(GNOMEVFS.*)#have_gnomevfs=no#g' configure.in
 %endif
 
+# most of cases use common subset of ISO latin 1 and 2
+# libgda-xslt code uses ISO latin 2
+for f in \
+	libgda/gda-column.c \
+	libgda/gda-column.h \
+	libgda/gda-row.c \
+	libgda/sqlite/gda-sqlite.h \
+	libgda/sqlite/gda-sqlite-provider.c \
+	libgda/sqlite/gda-sqlite-provider.h \
+	libgda/sqlite/gda-sqlite-recordset.c \
+	libgda/sqlite/gda-sqlite-recordset.h \
+	libgda-xslt/sql_backend.c \
+	libgda-xslt/sql_exslt_internal.c \
+	libgda-xslt/sqlexslt.c \
+	providers/ldap/libmain.c \
+	; do
+	iconv -f iso-8859-2 -t utf-8 "$f" -o "${f}.new"
+	%{__mv} "${f}.new" "$f"
+done
+
 %build
-CXXFLAGS="%{rpmcxxflags} -fno-rtti -fno-exceptions"
+%{__gtkdocize}
 %{__intltoolize}
 %{__libtoolize}
 %{__aclocal}
 %{__autoconf}
 %{__automake}
+CXXFLAGS="%{rpmcxxflags} -fno-rtti -fno-exceptions"
 %configure \
 	%{!?with_static_libs:--disable-static} \
 	%{?with_apidocs:--enable-gtk-doc} \
@@ -332,7 +355,6 @@ CXXFLAGS="%{rpmcxxflags} -fno-rtti -fno-exceptions"
 	--with-odbc%{!?with_odbc:=no} \
 	--with-oracle%{!?with_oci:=no} \
 	--with-postgres%{!?with_pgsql:=no} \
-	--with-sqlite%{!?with_sqlite:=no} \
 	%{?with_sybase:--with-sybase=/usr} \
 	--with-tds%{!?with_freetds:=no} \
 	--with-xbase%{!?with_xbase:=no}
