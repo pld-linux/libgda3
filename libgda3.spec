@@ -32,7 +32,7 @@ Version:	3.1.5
 Release:	21
 License:	LGPL v2+/GPL v2+
 Group:		Libraries
-Source0:	http://ftp.gnome.org/pub/GNOME/sources/libgda/3.1/libgda-%{version}.tar.bz2
+Source0:	https://download.gnome.org/sources/libgda/3.1/libgda-%{version}.tar.bz2
 # Source0-md5:	eb7da5286a112e7cff3111c89fba4456
 Patch0:		%{name}-configure.patch
 Patch1:		%{name}-am.patch
@@ -40,7 +40,7 @@ Patch2:		glib232.patch
 Patch3:		format-security.patch
 Patch4:		mdb-0.7.patch
 Patch5:		x32.patch
-URL:		http://www.gnome-db.org/
+URL:		https://www.gnome-db.org/
 %{?with_firebird:BuildRequires:	Firebird-devel}
 BuildRequires:	autoconf >= 2.59
 BuildRequires:	automake >= 1:1.8
